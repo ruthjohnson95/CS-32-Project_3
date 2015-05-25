@@ -151,12 +151,12 @@ void Game::play()
 			break;
 		}//end of case statement
 
-
+		
 		}//end of switch  
 
 		//clearScreen();
 	}
-	//clearScreen();
+	clearScreen();
 	//m_dungeon->display("");
 
 }
