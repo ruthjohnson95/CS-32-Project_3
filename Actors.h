@@ -237,8 +237,8 @@ class Goblin : public Actor
 public:
 	Goblin(int row, int col, Dungeon* d, Weapon* w);
 	virtual ~Goblin();
-	bool moveMonster(int target_row, int target_col); 
-	virtual bool smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count);
+	bool moveMonster(int target_row, int target_col);
+	virtual bool smell(int sr, int sc, int target_row, int target_col, int smell_power, int& step_count, char(&temp)[MAXROWS][MAXCOLS]);
 	virtual void drop();
 
 private:

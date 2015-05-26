@@ -652,15 +652,59 @@ bool Goblin::moveMonster(int target_row, int target_col)
 	int f_row = row();
 	int f_col = col();
 	//(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count)
-	int step_count = 0; 
-	if (smell(f_row, f_col,target_row, target_col,SMELL_POWER , step_count))
-	{
-		//futrue row, future col, current row, current col
-		moveActor(row(), col(), c_row, c_col);//move on the grid
-		if (target_row == row() && target_col == col()) return true;//if lands on Player
-		else return false;
+	//int step_count = 0; 
 
+	char temp[MAXROWS][MAXCOLS];
+	for (int i = 0; i < MAXCOLS; i++)
+	{
+		for (int j = 0; j < MAXROWS; j++)
+		{
+			temp[i][j] = getDungeon()->getChar(i, j);
+		}
 	}
+
+	int north_steps = 0;
+	int east_steps = 0;
+	int west_steps = 0;
+	int south_steps = 0; 
+
+	bool north = smell(f_row-1, f_col, target_row, target_col , SMELL_POWER, north_steps, temp);
+	bool east = smell(f_row, f_col+1, target_row, target_col, SMELL_POWER, east_steps, temp);
+	bool south = smell(f_row+1, f_col, target_row, target_col, SMELL_POWER, south_steps, temp);
+	bool west = smell(f_row, f_col-1, target_row, target_col, SMELL_POWER, west_steps, temp);
+
+	int min = 9999; 
+	int row = c_row;
+	int col = c_col;
+	if (north && north_steps < min)
+	{
+		row = f_row - 1;
+		col = f_col; 
+		min = north_steps;
+	}
+	if (east && east_steps < min)
+	{
+		row = f_row;
+		col = f_col+1;
+		min = east_steps;
+	}
+	if (south && south_steps < min)
+	{
+		row = f_row + 1;
+		col = f_col;
+		min = south_steps;
+	}
+	if (west && west_steps < min)
+	{
+		row = f_row;
+		col = f_col-1;
+		min = west_steps;
+	}
+
+		//futrue row, future col, current row, current col
+		moveActor(row, col, c_row, c_col);//move on the grid
+		if (row == getDungeon()->getPlayer()->row() && col == getDungeon()->getPlayer()->col()) return true;
+		else return false; 
 }
 
 
@@ -679,24 +723,14 @@ void Goblin::drop()
 
 
 
-bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count)
+bool Goblin::smell(int sr, int sc, int target_row, int target_col, int smell_power, int& step_count, char (&temp)[MAXROWS][MAXCOLS])
 {
-	char temp[MAXROWS][MAXCOLS];
-	for (int i = 0; i < MAXCOLS; i++)
-	{
-		for (int j = 0; j < MAXROWS; j++)
-		{
-			temp[i][j] = getDungeon()->getChar(i, j);
-		}
-	}
-
-	//////////////////////////////////////
-
+	
 	int first_step_r = 0;
 	int first_step_c = 0;
 
 	//check # of steps
-	if (step_count > 15) return false;
+	if (step_count > smell_power) return false;
 
 	//base case
 	//start and finish are the same 
@@ -709,11 +743,11 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	}
 
 	//record the 1st step taken
-	if (step_count == 1)
+	/*if (step_count == 1)
 	{
 		first_step_r = sr;
 		first_step_c = sc;
-	}
+	}*/
 
 	//recursive steps
 
@@ -722,7 +756,13 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	{
 		++step_count;
 		temp[sr - 1][sc] = 'x'; 
-		smell(sr -= 1, sc, target_row, target_col, smell_power, step_count);
+		if (smell(sr - 1, sc, target_row, target_col, smell_power, step_count, temp))
+		{
+			
+			return true;
+		}
+		else
+			step_count--;
 	}
 
 	
@@ -731,7 +771,13 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	{
 		++step_count;
 		temp[sr][sc+1] = 'x';
-		smell(sr, sc += 1, target_row, target_col, smell_power, step_count);
+		if (smell(sr, sc + 1, target_row, target_col, smell_power, step_count, temp))
+		{
+
+			return true;
+		}
+		else
+			step_count--;
 	}
 
 	//move South
@@ -739,7 +785,13 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	{
 		++step_count;
 		temp[sr + 1][sc] = 'x';
-		smell(sr += 1, sr, target_row, target_col, smell_power, step_count);
+		if (smell(sr + 1, sr, target_row, target_col, smell_power, step_count, temp))
+		{
+			
+			return true;
+		}
+		else
+			step_count--;
 	}
 
 
@@ -748,7 +800,13 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	{
 		++step_count;
 		temp[sr][sc - 1] = 'x';
-		smell(sr, sc -= 1, target_row, target_col, smell_power, step_count);
+		if (smell(sr, sc - 1, target_row, target_col, smell_power, step_count, temp))
+		{
+			
+			return true; 
+		}
+		else
+			step_count--;
 	}
 
 
