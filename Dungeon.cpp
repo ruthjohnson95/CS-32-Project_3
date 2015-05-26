@@ -1,8 +1,10 @@
 #include "Dungeon.h"
+#include "Game2.h"
 //#include "utilities.h"
 
 
-Dungeon::Dungeon(int level)
+Dungeon::Dungeon(int level, Game* g)
+	: m_game(g)
 {
 	//set level
 	m_level = level; 
@@ -16,6 +18,7 @@ Dungeon::Dungeon(int level)
 		
 		}
 	}
+	m_goblin_smell_distance = g->getGoblinSmellDistance();
 }
 
 void Dungeon::addPlayer(int row, int col)
@@ -60,6 +63,11 @@ bool Dungeon::notWall(int r, int c)
 	if (r == 0 || r == MAXCOLS-1) return false;
 	else if (c == 0 || c == MAXROWS-1) return false;
 	else return true; 
+}
+
+int Dungeon::getSmellDistance()
+{
+	return m_goblin_smell_distance;
 }
 
 bool Dungeon::pathExists(int sr, int sc, int er, int ec)
@@ -278,8 +286,24 @@ void Dungeon::addCritter(char symbol, int row, int col)
 
 void Dungeon::createDungeonLevel()
 {
-	makeRoom(1, 1, 60, 15);
+	makeRoom(1, 1, 5, 5);
 
+	int index = randInt(m_Coords.size() - 1);
+	int row = m_Coords[index].r();
+	int col = m_Coords[index].c();
+
+	//add in random spot
+	if (ifBlank(row, col))
+	{
+		addCritter('G', row, col);
+	}
+
+	index = 0 + rand() % m_Coords.size();
+
+	//add player
+
+	addPlayer(m_Coords[index].r(), m_Coords[index].c());
+	////////////////////////////////
 	/*
 	int a = 1 + rand() % 11;
 	int b = 1 + rand() % 17;
@@ -296,7 +320,7 @@ void Dungeon::createDungeonLevel()
 		}
 	}
 
-	*/
+	
 	
 	//randomly place player
 	int index = 0 + rand() % m_Coords.size();
@@ -305,7 +329,7 @@ void Dungeon::createDungeonLevel()
 	
 		addPlayer(m_Coords[index].r(), m_Coords[index].c());
 	
-	
+		
 	//add staircase char
 		if (m_level < 4)
 		{
@@ -514,6 +538,7 @@ void Dungeon::createDungeonLevel()
 			}
 		}
 	}
+	*/
 }
 
 void Dungeon::increaseLevel()

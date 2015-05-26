@@ -8,10 +8,12 @@ using namespace std;
 // Implement these and other Game member functions you may have added.
 
 Game::Game(int goblinSmellDistance)
+	:m_goblinSmellDistance( goblinSmellDistance)
 {	
 	//create dungeon
-	m_dungeon = new Dungeon(0);
+	m_dungeon = new Dungeon(0, this);
 	m_dungeon->createDungeonLevel();
+	 
 }
 
 Game::~Game()

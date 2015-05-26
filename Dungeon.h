@@ -10,16 +10,18 @@
 #include <cstdlib>
 
 #include "Actors.h"
+#include "Game2.h"
 
 using namespace std; 
 
 //Global constants 
-const int MAXROWS = 70;
-const int MAXCOLS = 18;
+const int MAXROWS = 7; //70;
+const int MAXCOLS = 7; //18;
 
 class Object;
 class Actor;
 class Player;
+class Game;
 
 class Coord
 {
@@ -35,7 +37,7 @@ private:
 class Dungeon
 {
 public:
-	Dungeon(int m_level);
+	Dungeon(int m_level, Game* g);
 	void makeRoom(int s_r, int s_c, int x_scale, int y_scale);
 	bool pathExists(int sr, int sc, int er, int ec);
 	bool notWall(int r, int c);
@@ -60,13 +62,15 @@ public:
 	void increaseLevel();
 	bool testForObj(int r, int c, Object* &o); 
 	int getLevel();
+	int getSmellDistance();
 
 private:
 	Player* m_player;
+	Game* m_game;
 	int m_level;
 	int m_rows;
 	int m_cols;
-
+	int m_goblin_smell_distance; 
 	//char d_grid[MAXROWS][MAXCOLS];
 	char d_grid[18][70];
 	//int test[70][18];

@@ -238,11 +238,11 @@ public:
 	Goblin(int row, int col, Dungeon* d, Weapon* w);
 	virtual ~Goblin();
 	bool moveMonster(int target_row, int target_col); 
-	virtual bool smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int step_count);
+	virtual bool smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count);
 	virtual void drop();
 
 private:
-	const int SMELL_POWER = 15; 
+	int SMELL_POWER;
 };
 
 /////////////////////////////////////////////////////////

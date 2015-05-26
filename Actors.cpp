@@ -60,7 +60,6 @@ bool Actor::move(char dir)
 	case ARROW_DOWN: maxCanMove = m_dungeon->rows() - c_r;
 		break;
 	}
-
 	if (maxCanMove == 0) //against wall
 		return can_attack;
 
@@ -441,8 +440,6 @@ bool Actor::smell(int er, int ec, int smell_power)
 		}
 	}
 
-
-
 	//move East
 	if (m_dungeon->getChar(c_r, c_c + 1) == '@' || m_dungeon->getChar(c_r, c_c + 1) == ' ' || m_dungeon->getChar(c_r, c_c + 1) == '?' || m_dungeon->getChar(c_r, c_c + 1) == ')' || m_dungeon->getChar(c_r, c_c + 1) == '>' || m_dungeon->getChar(c_r, c_c + 1) == '&')
 	{
@@ -617,10 +614,9 @@ void Dragon::regainPts()
 /////////////////////////////////////////////////////////
 
 Goblin::Goblin(int row, int col, Dungeon* d, Weapon* w)
-	:Actor(d, row, col, randInt(5)+15, w, 3, 1, 1, 'G', "Golbin")
+	:Actor(d, row, col, randInt(5) + 15, w, 3, 1, 1, 'G', "Golbin"), SMELL_POWER(getDungeon()->getSmellDistance())
 {
-	//find random values
-	//maybe, put equation inside initializer list
+	
 }
 
 Goblin::~Goblin()
@@ -650,13 +646,27 @@ bool Goblin::moveMonster(int target_row, int target_col)
 	}
 	*/
 
-	return false; 
+	//own row and column, player's row and column
+	int c_row = row();
+	int c_col = col();
+	int f_row = row();
+	int f_col = col();
+	//(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count)
+	int step_count = 0; 
+	if (smell(f_row, f_col,target_row, target_col,SMELL_POWER , step_count))
+	{
+		//futrue row, future col, current row, current col
+		moveActor(row(), col(), c_row, c_col);//move on the grid
+		if (target_row == row() && target_col == col()) return true;//if lands on Player
+		else return false;
+
+	}
 }
 
 
 void Goblin::drop()
 {
-	if (trueWithProbability(1.0 / 3.0) && getDungeon()->ifBlank(row(), col()))
+	if (trueWithProbability(1.0 /3.0) && getDungeon()->ifBlank(row(), col()))
 	{
 		if (trueWithProbability(.50))
 		{
@@ -664,16 +674,26 @@ void Goblin::drop()
 		}
 		else getDungeon()->addObject("Magic axe", row(), col());
 	}
-	//boblin 1/3 chance drop either magic axe or fangs
+	//goblin 1/3 chance drop either magic axe or fangs
 }
 
 
-/*
-bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int step_count)
+
+bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count)
 {
+	char temp[MAXROWS][MAXCOLS];
+	for (int i = 0; i < MAXCOLS; i++)
+	{
+		for (int j = 0; j < MAXROWS; j++)
+		{
+			temp[i][j] = getDungeon()->getChar(i, j);
+		}
+	}
+
+	//////////////////////////////////////
+
 	int first_step_r = 0;
 	int first_step_c = 0;
-
 
 	//check # of steps
 	if (step_count > 15) return false;
@@ -698,39 +718,44 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	//recursive steps
 
 	//move North
-	if (m_dungeon->getChar(sr - 1, sc) == ' ' || m_dungeon->getChar(sr - 1, sc) == '?' || m_dungeon->getChar(sr - 1, sc) == ')' || m_dungeon->getChar(sr - 1, sc) == '>' || m_dungeon->getChar(sr - 1, sc) == '&')
+	if (temp[sr - 1][sc] != 'x' && (getDungeon()->getChar(sr - 1, sc) == ' ' || getDungeon()->getChar(sr - 1, sc) == '?' || getDungeon()->getChar(sr - 1, sc) == ')' || getDungeon()->getChar(sr - 1, sc) == '>' || getDungeon()->getChar(sr - 1, sc) == '&'  || getDungeon()->getChar(sr - 1, sc) == ')' || getDungeon()->getChar(sr - 1, sc) == '>' || getDungeon()->getChar(sr - 1, sc) == '@'))
 	{
 		++step_count;
-		smell(sr -= 1, sc, target_row, target_col, step_count);
+		temp[sr - 1][sc] = 'x'; 
+		smell(sr -= 1, sc, target_row, target_col, smell_power, step_count);
+	}
+
+	
+	//move East 
+	if (temp[sr][sc + 1] != 'x' && (getDungeon()->getChar(sr, sc + 1) == ' ' || getDungeon()->getChar(sr, sc + 1) == '?' || getDungeon()->getChar(sr, sc + 1) == ')' || getDungeon()->getChar(sr, sc + 1) == '>' || getDungeon()->getChar(sr, sc + 1) == '&' || getDungeon()->getChar(sr - 1, sc) == ')' || getDungeon()->getChar(sr - 1, sc) == '>' || getDungeon()->getChar(sr - 1, sc) == '@'))
+	{
+		++step_count;
+		temp[sr][sc+1] = 'x';
+		smell(sr, sc += 1, target_row, target_col, smell_power, step_count);
 	}
 
 	//move South
-	if (m_dungeon->getChar(sr + 1, sc) == ' ' || m_dungeon->getChar(sr + 1, sc) == '?' || m_dungeon->getChar(sr + 1, sc) == ')' || m_dungeon->getChar(sr + 1, sc) == '>' || m_dungeon->getChar(sr + 1, sc) == '&')
+	if (temp[sr + 1][sc] != 'x' && (getDungeon()->getChar(sr + 1, sc) == ' ' || getDungeon()->getChar(sr + 1, sc) == '?' || getDungeon()->getChar(sr + 1, sc) == ')' || getDungeon()->getChar(sr + 1, sc) == '>' || getDungeon()->getChar(sr + 1, sc) == '&' || getDungeon()->getChar(sr - 1, sc) == ')' || getDungeon()->getChar(sr - 1, sc) == '>' || getDungeon()->getChar(sr - 1, sc) == '@'))
 	{
 		++step_count;
-		smell(sr += 1, sr, target_row, target_col, step_count);
+		temp[sr + 1][sc] = 'x';
+		smell(sr += 1, sr, target_row, target_col, smell_power, step_count);
 	}
 
-	//move East 
-	if (m_dungeon->getChar(sr, sc + 1) == ' ' || m_dungeon->getChar(sr, sc + 1) == '?' || m_dungeon->getChar(sr, sc + 1) == ')' || m_dungeon->getChar(sr, sc + 1) == '>' || m_dungeon->getChar(sr, sc + 1) == '&')
-	{
-		++step_count;
-		smell(sr, sc += 1, target_row, target_col, step_count);
-	}
 
 	//move West
-	if (m_dungeon->getChar(sr, sc - 1) == ' ' || m_dungeon->getChar(sr, sc - 1) == '?' || m_dungeon->getChar(sr, sc - 1) == ')' || m_dungeon->getChar(sr, sc - 1) == '>' || m_dungeon->getChar(sr, sc - 1) == '&')
+	if (temp[sr][sc - 1] != 'x' && (getDungeon()->getChar(sr, sc - 1) == ' ' || getDungeon()->getChar(sr, sc - 1) == '?' || getDungeon()->getChar(sr, sc - 1) == ')' || getDungeon()->getChar(sr, sc - 1) == '>' || getDungeon()->getChar(sr, sc - 1) == '&') ||  getDungeon()->getChar(sr - 1, sc) == ')' || getDungeon()->getChar(sr - 1, sc) == '>' || getDungeon()->getChar(sr - 1, sc) == '@')
 	{
 		++step_count;
-		smell(sr, sc -= 1, target_row, target_col, step_count);
+		temp[sr][sc - 1] = 'x';
+		smell(sr, sc -= 1, target_row, target_col, smell_power, step_count);
 	}
 
 
 }
-*/
 
-
-bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int step_count)
+/*
+bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int& step_count)
 {
 	int first_step_r = 0;
 	int first_step_c = 0;
@@ -787,3 +812,4 @@ bool Goblin::smell(int& sr, int& sc, int target_row, int target_col, int smell_p
 	}
 
 }
+*/

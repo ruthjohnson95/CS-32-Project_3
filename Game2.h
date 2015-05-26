@@ -25,15 +25,14 @@ public:
 	Game(int goblinSmellDistance);
 	~Game();
 	void play();
+	int getGoblinSmellDistance()
+	{
+		return m_goblinSmellDistance;
+	}
 
 private:
 	Dungeon* m_dungeon;
-	/*
-	//dynamic vector of Actor pointers
-	vector<Actor*>m_actors;
-	//dynamic vector of Object pointers
-	vector<Object*>m_objects;
-	*/
+	int m_goblinSmellDistance; 
 };
 
 
