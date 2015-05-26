@@ -28,7 +28,7 @@ void Game::play()
 		char action;
 		action = getCharacter();
 		clearScreen();
-		//m_dungeon->display("");
+	//	m_dungeon->display("");
 
 		switch (action)
 		{
@@ -36,6 +36,8 @@ void Game::play()
 			cout << '\a' << endl; //beep
 				continue; 
 		case 'q':
+			clearScreen();
+			m_dungeon->display("");
 			return; 
 
 		case 'c':
@@ -62,6 +64,8 @@ void Game::play()
 			//golden idol
 			if (m_dungeon->getPlayer()->getTemp() == '&')
 			{
+				clearScreen();
+				m_dungeon->display("");
 				cout << "Congratulations, you won!" << endl;
 				return;
 			}
@@ -119,20 +123,30 @@ void Game::play()
 		case 'k':
 		case 'l':
 		{
-			bool play = (m_dungeon->getPlayer()->move(action));
 			//m_dungeon->display("");
+			bool play = (m_dungeon->getPlayer()->move(action));
+			m_dungeon->display("");
 			if (play)
 			{
+				//attack the Player 
 				m_dungeon->getPlayer()->attack(m_dungeon->getPlayer()->getOpponent());
+
 			}
 
-			//Monsters take their turn
+			//Monsters take their turn to move
 			for (int i = 0; i < m_dungeon->getCritters().size(); ++i)
 			{
 
-				m_dungeon->getCritters()[i]->moveMonster(m_dungeon->getPlayer()->row(), m_dungeon->getPlayer()->col());
+				bool can_attack = m_dungeon->getCritters()[i]->moveMonster(m_dungeon->getPlayer()->row(), m_dungeon->getPlayer()->col());
 
 				Actor* monster = m_dungeon->getCritters()[i];
+
+				if (can_attack)
+				{
+					monster->attack(m_dungeon->getPlayer());
+				}
+				
+				/*
 				//attack if player is surrounding a monster
 				//check North
 				if (m_dungeon->getChar(monster->row() - 1, monster->col()) == '@')
@@ -158,8 +172,11 @@ void Game::play()
 					//m_dungeon->display("");
 					monster->attack(m_dungeon->getPlayer());
 				}
+				*/
 			} //end of for loop
-			m_dungeon->display("");
+
+			//clearScreen();
+			//m_dungeon->display("");
 			break;
 		}//end of case statement
 

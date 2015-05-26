@@ -34,8 +34,10 @@ void Actor::moveActor(int f_row, int f_col, int p_row, int p_col)
 	
 }
 
-void Actor::moveMonster(int target_row, int target_col)
-{}
+bool Actor::moveMonster(int target_row, int target_col)
+{
+	return true; 
+}
 
 ///////MUTATOR FUNCTIONS///////////////////
 bool Actor::move(char dir)
@@ -385,7 +387,7 @@ Bogeymen::Bogeymen(int row, int col, Dungeon* d, Weapon* w)
 Bogeymen::~Bogeymen()
 {}
 
-void Bogeymen::moveMonster(int target_row, int target_col)
+bool Bogeymen::moveMonster(int target_row, int target_col)
 {
 	//own row and column, player's row and column
 	int c_row = row();
@@ -394,8 +396,8 @@ void Bogeymen::moveMonster(int target_row, int target_col)
 	{
 		//futrue row, future col, current row, current col
 		moveActor(row(), col(), c_row, c_col);//move on the grid
-		//clearScreen();
-		//getDungeon()->display("");
+		if (target_row == row() && target_col == col()) return true;//if lands on Player
+		else return false; 
 
 	}
 }
@@ -425,10 +427,15 @@ bool Actor::smell(int er, int ec, int smell_power)
 
 	//check all four directions 
 	//move North
-	if (m_dungeon->getChar(c_r - 1, c_c) == ' ' || m_dungeon->getChar(c_r - 1, c_c) == '?' || m_dungeon->getChar(c_r - 1, c_c) == ')' || m_dungeon->getChar(c_r - 1, c_c) == '>' || m_dungeon->getChar(c_r - 1, c_c) == '&')//check for valid moving position 
+	if (m_dungeon->getChar(c_r - 1, c_c) == '@' ||  m_dungeon->getChar(c_r - 1, c_c) == ' ' || m_dungeon->getChar(c_r - 1, c_c) == '?' || m_dungeon->getChar(c_r - 1, c_c) == ')' || m_dungeon->getChar(c_r - 1, c_c) == '>' || m_dungeon->getChar(c_r - 1, c_c) == '&')//check for valid moving position 
 	{
 		if ((abs(c_r - 1 - er) + abs(c_c - ec)) < c_distance)  //moving away from monster
 		{
+			if (m_dungeon->getChar(c_r - 1, c_c) == '@')
+			{
+				attack(m_dungeon->getPlayer());
+				return false; //can't actually update coordinates b/c player is in the way
+			}
 			c_r -= 1; //update moved coordinate 
 			return true;
 		}
@@ -437,10 +444,17 @@ bool Actor::smell(int er, int ec, int smell_power)
 
 
 	//move East
-	if (m_dungeon->getChar(c_r, c_c + 1) == ' ' || m_dungeon->getChar(c_r, c_c + 1) == '?' || m_dungeon->getChar(c_r, c_c + 1) == ')' || m_dungeon->getChar(c_r, c_c + 1) == '>' || m_dungeon->getChar(c_r, c_c + 1) == '&')
+	if (m_dungeon->getChar(c_r, c_c + 1) == '@' || m_dungeon->getChar(c_r, c_c + 1) == ' ' || m_dungeon->getChar(c_r, c_c + 1) == '?' || m_dungeon->getChar(c_r, c_c + 1) == ')' || m_dungeon->getChar(c_r, c_c + 1) == '>' || m_dungeon->getChar(c_r, c_c + 1) == '&')
 	{
 		if ((abs(c_r - er) + abs(c_c + 1 - ec)) < c_distance) //moving away from monster
 		{
+
+			if (m_dungeon->getChar(c_r, c_c + 1) == '@')
+			{
+				attack(m_dungeon->getPlayer());
+				return false;
+			}
+
 			c_c += 1;//update moved coordinate 
 
 			return true;
@@ -450,10 +464,15 @@ bool Actor::smell(int er, int ec, int smell_power)
 
 
 	//move South
-	if (m_dungeon->getChar(c_r + 1, c_c) == ' ' || m_dungeon->getChar(c_r + 1, c_c) == '?' || m_dungeon->getChar(c_r + 1, c_c) == ')' || m_dungeon->getChar(c_r + 1, c_c) == '>' || m_dungeon->getChar(c_r + 1, c_r) == '&')
+	if (m_dungeon->getChar(c_r + 1, c_c) == '@' || m_dungeon->getChar(c_r + 1, c_c) == ' ' || m_dungeon->getChar(c_r + 1, c_c) == '?' || m_dungeon->getChar(c_r + 1, c_c) == ')' || m_dungeon->getChar(c_r + 1, c_c) == '>' || m_dungeon->getChar(c_r + 1, c_r) == '&')
 	{
 		if ((abs(c_r + 1 - er) + abs(c_c - ec)) < c_distance)
 		{//moving away from monster
+			if (m_dungeon->getChar(c_r + 1, c_c) == '@')
+			{
+				attack(m_dungeon->getPlayer());
+				return false; 
+			}
 			c_r += 1; //update moved coordinate 
 
 			return true;
@@ -462,10 +481,15 @@ bool Actor::smell(int er, int ec, int smell_power)
 
 
 	//move West
-	if (m_dungeon->getChar(c_r, c_c - 1) == ' ' || m_dungeon->getChar(c_r, c_c - 1) == '?' || m_dungeon->getChar(c_r, c_c - 1) == ')' || m_dungeon->getChar(c_r, c_c - 1) == '>' || m_dungeon->getChar(c_r, c_c - 1) == '&')
+	if (m_dungeon->getChar(c_r, c_c - 1) == '@' ||  m_dungeon->getChar(c_r, c_c - 1) == ' ' || m_dungeon->getChar(c_r, c_c - 1) == '?' || m_dungeon->getChar(c_r, c_c - 1) == ')' || m_dungeon->getChar(c_r, c_c - 1) == '>' || m_dungeon->getChar(c_r, c_c - 1) == '&')
 	{
 		if ((abs(c_r - er) + abs(c_c - 1 - ec)) < c_distance) //moving away from monster
 		{
+			if (m_dungeon->getChar(c_r, c_c - 1) == '@')
+			{
+				attack(m_dungeon->getPlayer());
+				return false;
+			}
 			c_c -= 1;//update moved coordinate 
 
 			return true;
@@ -489,17 +513,17 @@ SnakeWomen::SnakeWomen(int row, int col, Dungeon* d, Weapon* w)
 SnakeWomen::~SnakeWomen()
 {}
 
-void SnakeWomen::moveMonster(int target_row, int target_col)
+bool SnakeWomen::moveMonster(int target_row, int target_col)
 {
 	//own row and column, player's row and column
 	int c_row = row();
 	int c_col = col();
 	if (smell(target_row, target_col, SMELL_POWER))
 	{
-			//futrue row, future col, current row, current col
-			moveActor(row(), col(), c_row, c_col);//move on the grid
-			//clearScreen();
-			//getDungeon()->display(""); 
+		//futrue row, future col, current row, current col
+		moveActor(row(), col(), c_row, c_col);//move on the grid
+		if (target_row == row() && target_col == col()) return true;//if lands on Player
+		else return false;
 
 	}
 	
@@ -529,7 +553,7 @@ Dragon::Dragon(int row, int col, Dungeon* d, Weapon* w)
 Dragon::~Dragon()
 {}
 
-void Dragon::moveMonster(int target_row, int target_col)
+bool Dragon::moveMonster(int target_row, int target_col)
 {
 	//own row and column, player's row and column
 	int c_row = row();
@@ -538,8 +562,8 @@ void Dragon::moveMonster(int target_row, int target_col)
 	{
 		//futrue row, future col, current row, current col
 		moveActor(row(), col(), c_row, c_col);//move on the grid
-	//	clearScreen();
-	//	getDungeon()->display("");
+		if (target_row == row() && target_col == col()) return true;//if lands on Player
+		else return false;
 
 	}
 	
@@ -602,7 +626,7 @@ Goblin::Goblin(int row, int col, Dungeon* d, Weapon* w)
 Goblin::~Goblin()
 {}
 
-void Goblin::moveMonster(int target_row, int target_col)
+bool Goblin::moveMonster(int target_row, int target_col)
 {
 	/*
 	//own row and column, player's row and column
@@ -626,7 +650,7 @@ void Goblin::moveMonster(int target_row, int target_col)
 	}
 	*/
 
-	return; 
+	return false; 
 }
 
 

@@ -41,7 +41,7 @@ public:
 	// smell for Monsters
 	virtual bool smell(int er, int ec, int smell_power);
 	//moves for Monsters; implements the smell 
-	virtual void moveMonster(int target_row, int target_col);
+	virtual bool moveMonster(int target_row, int target_col);
 	//drops an object; takes into accout the probability 
 	virtual void drop();
 	//deletes a Monster from the grid and the vector of Monsters
@@ -186,7 +186,7 @@ class Bogeymen : public Actor
 public:
 	Bogeymen(int row, int col, Dungeon* d, Weapon* w);
 	virtual ~Bogeymen();
-	virtual void moveMonster(int target_row, int target_col);
+	virtual bool moveMonster(int target_row, int target_col);
 	virtual void drop();
 	virtual bool smell(int er, int ec, int smell_power);
 
@@ -203,7 +203,7 @@ class SnakeWomen : public Actor
 public:
 	SnakeWomen(int row, int col, Dungeon* d, Weapon* w);
 	virtual ~SnakeWomen();
-	virtual void moveMonster(int target_row, int target_col);
+	virtual bool moveMonster(int target_row, int target_col);
 	virtual void drop();
 
 private:
@@ -219,7 +219,7 @@ class Dragon : public Actor
 public:
 	Dragon(int row, int col, Dungeon* d, Weapon* w);
 	virtual ~Dragon();
-	virtual void moveMonster(int target_row, int target_col);
+	virtual bool moveMonster(int target_row, int target_col);
 	virtual void drop();
 
 	//Dragons can regain pts
@@ -237,7 +237,7 @@ class Goblin : public Actor
 public:
 	Goblin(int row, int col, Dungeon* d, Weapon* w);
 	virtual ~Goblin();
-	void moveMonster(int target_row, int target_col); 
+	bool moveMonster(int target_row, int target_col); 
 	virtual bool smell(int& sr, int& sc, int target_row, int target_col, int smell_power, int step_count);
 	virtual void drop();
 
