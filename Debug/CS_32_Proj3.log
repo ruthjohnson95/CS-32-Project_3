@@ -1,9 +1,9 @@
-﻿Build started 5/25/2015 3:31:36 PM.
+﻿Build started 5/25/2015 6:25:59 PM.
      1>Project "c:\CS32\visual studio 2013\Projects\CS_32_Proj3\CS_32_Proj3\CS_32_Proj3.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Game2.cpp
          Game2.cpp
-     1>c:\cs32\visual studio 2013\projects\cs_32_proj3\cs_32_proj3\game2.cpp(123): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\cs32\visual studio 2013\projects\cs_32_proj3\cs_32_proj3\game2.cpp(130): warning C4018: '<' : signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"c:\CS32\visual studio 2013\Projects\CS_32_Proj3\Debug\CS_32_Proj3.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"c:\CS32\visual studio 2013\Projects\CS_32_Proj3\Debug\CS_32_Proj3.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"c:\CS32\visual studio 2013\Projects\CS_32_Proj3\Debug\CS_32_Proj3.lib" /MACHINE:X86 Debug\main.obj
          Debug\Actors.obj
@@ -18,4 +18,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.36
+Time Elapsed 00:00:02.18

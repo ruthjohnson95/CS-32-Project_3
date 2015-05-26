@@ -10,7 +10,7 @@ using namespace std;
 Game::Game(int goblinSmellDistance)
 {	
 	//create dungeon
-	m_dungeon = new Dungeon(4);
+	m_dungeon = new Dungeon(0);
 	m_dungeon->createDungeonLevel();
 }
 
@@ -37,6 +37,11 @@ void Game::play()
 				continue; 
 		case 'q':
 			return; 
+
+		case 'c':
+			m_dungeon->getPlayer()->cheat(); 
+			m_dungeon->display("");
+			break; 
 		case 'g':
 		{
 			Object* o = nullptr;
@@ -45,13 +50,22 @@ void Game::play()
 			{
 				m_dungeon->getPlayer()->addToInv(o);
 				//delete from the grid
-				m_dungeon->changeGrid(o->row(), o->col(), ' ');
+				
 				m_dungeon->getPlayer()->changeTemp(' ');
 				clearScreen();
+				
 				m_dungeon->display("");
+				m_dungeon->changeGrid(o->row(), o->col(), ' ');
 				cout << "You pick up a " << o->name() << endl;
+				break;
 			}
-			break;
+			//golden idol
+			if (m_dungeon->getPlayer()->getTemp() == '&')
+			{
+				cout << "Congratulations, you won!" << endl;
+				return;
+			}
+			
 		}
 		case 'w':
 		{
@@ -92,19 +106,12 @@ void Game::play()
 				clearScreen();
 				m_dungeon->createDungeonLevel();
 				m_dungeon->getPlayer()->changeTemp(' ');
+				m_dungeon->display("");
 				break;
 			}
 		}
 		 
 
-		case '&':
-		{
-			if (m_dungeon->getPlayer()->getTemp() == '&')
-			{
-				cout << "Congratulations, you won!" << endl;
-				return; 
-			}
-		}
 		break;
 
 		case 'h':
@@ -113,12 +120,12 @@ void Game::play()
 		case 'l':
 		{
 			bool play = (m_dungeon->getPlayer()->move(action));
-			m_dungeon->display("");
+			//m_dungeon->display("");
 			if (play)
 			{
 				m_dungeon->getPlayer()->attack(m_dungeon->getPlayer()->getOpponent());
 			}
-					
+
 			//Monsters take their turn
 			for (int i = 0; i < m_dungeon->getCritters().size(); ++i)
 			{
@@ -130,24 +137,29 @@ void Game::play()
 				//check North
 				if (m_dungeon->getChar(monster->row() - 1, monster->col()) == '@')
 				{
+					//m_dungeon->display("");
 					monster->attack(m_dungeon->getPlayer());
 				}
 				//check South
 				if (m_dungeon->getChar(monster->row() + 1, monster->col()) == '@')
 				{
+					//m_dungeon->display("");
 					monster->attack(m_dungeon->getPlayer());
 				}
 				//check East
 				if (m_dungeon->getChar(monster->row(), monster->col() + 1) == '@')
 				{
+					//m_dungeon->display("");
 					monster->attack(m_dungeon->getPlayer());
 				}
 				//check West
 				if (m_dungeon->getChar(monster->row(), monster->col() - 1) == '@')
 				{
+					//m_dungeon->display("");
 					monster->attack(m_dungeon->getPlayer());
 				}
 			} //end of for loop
+			m_dungeon->display("");
 			break;
 		}//end of case statement
 
@@ -156,7 +168,7 @@ void Game::play()
 
 		//clearScreen();
 	}
-	clearScreen();
+	//clearScreen();
 	//m_dungeon->display("");
 
 }

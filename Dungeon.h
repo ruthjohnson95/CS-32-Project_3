@@ -48,7 +48,7 @@ public:
 	bool ifBlank(int r, int c);
 
 	
-	vector<Actor*>getCritters();
+	vector<Actor*>& getCritters();
 	vector<Object*>getObjects();
 	char getChar(int row, int col); 
 	Player* getPlayer();

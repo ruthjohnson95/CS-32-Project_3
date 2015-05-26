@@ -155,8 +155,7 @@ void Actor::attack(Actor* opponent) //for the monsters to use
 
 		if (opponent->isDead())
 		{
-				//player died 
-				//special message
+			cout << m_name << ' ' << m_weapon->getAction() << " at the " << opponent->name() << " dealing a final blow." << endl;
 			return;
 		}
 	}
@@ -178,6 +177,7 @@ void Actor::changeTemp(char c)
 
 void Actor::drop() //only for monsters 
 {}
+
 
 
 ///////GETTER FUNCTIONS///////////////////
@@ -220,39 +220,41 @@ string Actor::name()
 
 void Actor::killMonster(Actor* a)
 {
-	//drop weapon
-	a->drop();
 
 	//delete from vector
 	int cur_size = m_dungeon->getCritters().size();
 
-	for (int i = 0; i < cur_size;)
+	for (int i = 0; i < cur_size; i++)
 	{
 		if (a->isDead())//if dead
 		{
-			vector<Actor*>::iterator it;
-			for (it = m_dungeon->getCritters().begin(); it != m_dungeon->getCritters().end(); )
+			for (int i = 0; i < m_dungeon->getCritters().size(); )
 			{
-				if ((*it)->isDead())
+				if ((m_dungeon->getCritters()[i])->isDead())
 				{
-					delete *it;
-					it = m_dungeon->getCritters().erase(it++);
+					//erase
+
+					for (int j = i; j < m_dungeon->getCritters().size() - 1; ++j)
+					{
+						m_dungeon->getCritters()[j] = m_dungeon->getCritters()[j + 1];
+					}
+
+					//delete(m_dungeon->getCritters()[m_dungeon->getCritters().size() - 1]);
+					m_dungeon->getCritters().pop_back();
+					m_dungeon->getPlayer()->changeTemp(' ');
+					cur_size = m_dungeon->getCritters().size();
 				}
-				else{
-					++it;
-				}
+				else ++i;
 			}
 
-			m_dungeon->getCritters().pop_back();
-			m_dungeon->getPlayer()->changeTemp(' ');
-			cur_size = m_dungeon->getCritters().size();
 		}
-		++i;
 	}
 
 	//delete from grid
 	m_dungeon->changeGrid(a->row(), a->col(), ' ');
 
+	//drop weapon
+	a->drop();
 
 	//message 
 }

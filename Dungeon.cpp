@@ -20,21 +20,22 @@ Dungeon::Dungeon(int level)
 
 void Dungeon::addPlayer(int row, int col)
 {
-	if (m_player == nullptr)
+	if (m_level == 0)
 	{
 		//create a player
 		Weapon* s = new Short_sword(row, col); 
 		m_player = new Player(row, col, this, s);
+		d_grid[row][col] = '@';
 	}
 	//place the player in the grid
-//	else
-	//{
-		//use previous player
-		
-		  
-	//}
-
+	else
+	{
+	d_grid[m_player->row()][m_player->row()] = ' ';
 	d_grid[row][col] = '@';
+	m_player->changeRow(row);
+	m_player->changeCol(col);
+	}
+
 }
 
 void Dungeon::display(string message)
@@ -152,7 +153,7 @@ bool Dungeon::ifBlank(int r, int c)
 	else return false; 
 }
 
-vector<Actor*> Dungeon::getCritters()
+vector<Actor*>& Dungeon::getCritters()
 {
 	return m_Critters;
 }
@@ -309,10 +310,8 @@ void Dungeon::createDungeonLevel()
 		if (m_level < 4)
 		{
 			index = 0 + rand() % m_Coords.size();
+			d_grid[m_Coords[index].r()][m_Coords[index].c()] = '>';
 		}
-
-	d_grid[m_Coords[index].r()][m_Coords[index].c()] = '>';
-
 
 	//add Critters (1-5 each)
 	

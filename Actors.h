@@ -115,9 +115,25 @@ public:
 		h_pts-=amount; 
 	}
 
+	void cheat()
+	{
+		h_pts = 50;
+		m_strength = 9; 
+	}
+
 	Actor* getOpponent()
 	{
 		return m_opponent;
+	}
+
+	void changeRow(int row)
+	{
+		c_r = row;
+	}
+
+	void changeCol(int col)
+	{
+		c_c = col; 
 	}
 
 private:
